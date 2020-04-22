@@ -60,7 +60,7 @@ export default function Home({ navigation, route }: any) {
               <Text>
                 <Text>Você começou </Text>
                 <Text style={{ fontWeight: "bold" }}>{activity.name}</Text>
-                <Text>, tenha uma ótima atividade!{"\n"}{"\n"}{motivationalPhrases}</Text>
+                <Text>, tenha uma ótima atividade!{"\n\n"}{motivationalPhrases}</Text>
               </Text>
             )
             setModalState({ visible: true, body: modalBody })
