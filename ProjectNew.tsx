@@ -1,7 +1,6 @@
-import { View, Button, Text, Modal, TouchableHighlight, FlatList } from "react-native"
-import { StyleSheet } from "react-native"
-import { Input } from "react-native-elements"
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect } from 'react'
+import { View, Button, Text, Modal, TouchableHighlight, FlatList, StyleSheet } from 'react-native'
+import { Input } from 'react-native-elements'
 import { insertProject } from "./Schemas"
 
 export default function ProjectNew({ navigation, route }: any) {
