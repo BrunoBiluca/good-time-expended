@@ -2,6 +2,7 @@ import { View, Button, Text, Modal, TouchableHighlight, FlatList } from "react-n
 import { StyleSheet } from "react-native"
 import { Input } from "react-native-elements"
 import React, { useState, useEffect } from "react"
+import { insertProject } from "./Schemas"
 
 export default function ProjectNew({ navigation, route }: any) {
 
@@ -116,7 +117,9 @@ export default function ProjectNew({ navigation, route }: any) {
           <Button title="Salvar" onPress={() => {
             project.key = project.name.toLowerCase().replace(/\s/g, "-")
 
-            // TODO: Implementar a escrita no banco de dados
+            project.parentProject = project.parentProject.key
+            insertProject(project)
+
             navigation.navigate('Home', { newProject: project })
           }} />
         </View>
