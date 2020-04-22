@@ -22,7 +22,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
-    }
+      "supportsTablet": true,
+      "bundleIdentifier": "io.brunobiluca.exponent"
+    },
+    "android": {
+      "package": "com.brunobiluca.goodtimeexpended"
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js"
   }
 }
