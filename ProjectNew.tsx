@@ -21,8 +21,8 @@ export default function ProjectNew({ navigation, route }: any) {
     name: '',                        // Nome do projeto
     parentProject: {} as any,     // Slug do projeto pai
     color: '' as String,             // Cor do projeto
-    goal: '',                          // Meta em horas do projeto
-    timeExpended: [] as any
+    goal: '' as any,                          // Meta em horas do projeto
+    timeExpended: []
   })
 
   var [modalState, setModalState] = useState({ visible: false })
@@ -114,10 +114,16 @@ export default function ProjectNew({ navigation, route }: any) {
 
         <View style={{ paddingVertical: 10, margin: 10, marginTop: 0 }}>
           <Button title="Salvar" onPress={() => {
-            project.key = project.name.toLowerCase().replace(/\s/g, "-")
+            let newProject = {
+              key: project.name.toLowerCase().replace(/\s/g, "-"),
+              name: project.name,
+              parentProject: project.parentProject?.key,
+              color: project.color,
+              goal: project.goal != '' ? parseFloat(project.goal) : 0,
+              timeExpended: []
+            }
 
-            project.parentProject = project.parentProject.key
-            insertProject(project)
+            insertProject(newProject)
 
             navigation.navigate('Home', { newProject: project })
           }} />

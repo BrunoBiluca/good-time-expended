@@ -1,53 +1,21 @@
-import React from "react"
+import React, { useState } from "react"
 import { StyleSheet, View, Text } from "react-native"
 import { FlatList } from "react-native-gesture-handler"
 import moment from "moment"
+import { getAllProjects, getAllTimeExpended } from "./Schemas"
 
 
 export default function TimeLog({ navegation }: any) {
-  const userProjects = [
-    {
-      "color": "blue",
-      "key": "estudo",
-      "name": "Estudo",
-      "timeExpended": [
-        {
-          "start_date": "2020-04-20T10:21:22.065Z",
-          "end_date": "2020-04-20T12:21:24.067Z"
-        },
-        {
-          "start_date": "2020-04-20T13:21:31.501Z",
-          "end_date": "2020-04-20T14:21:33.973Z"
-        },
-        {
-          "start_date": "2020-04-20T18:01:53.743Z",
-          "end_date": "2020-04-20T18:31:57.249Z"
-        }
-      ]
-    },
-    {
-      "color": "green",
-      "key": "trabalho",
-      "name": "Trabalho",
-      "timeExpended": [
-        {
-          "start_date": "2020-04-19T12:21:26.839Z",
-          "end_date": "2020-04-19T15:21:28.663Z"
-        }
-      ]
-    },
-    {
-      "color": "orange",
-      "key": "atividades-fisicas",
-      "name": "Atividades físicas",
-      "timeExpended": [
-        {
-          "start_date": "2020-04-20T10:22:29.247Z",
-          "end_date": "2020-04-20T18:22:32.252Z"
-        }
-      ]
-    }
-  ]
+
+  var [userProjects] = useState(getAllProjects())
+  var [timeExpended] = useState(() => {
+    return getAllTimeExpended()
+            .sorted('startDate', true)
+            .map(te => {
+              te['color'] = userProjects.find(p => p.key == te.key).color
+              return te
+            }) 
+  })
 
   let styleCircle = function (color: String): any {
     return { ...styles.circle, backgroundColor: color }
@@ -56,12 +24,10 @@ export default function TimeLog({ navegation }: any) {
   return (
     <View style={styles.container}>
       <FlatList
-        data={userProjects.flatMap(p => p.timeExpended.map((t: any) => {
-          return ({ name: p.name, color: p.color, ...t })
-        }))}
+        data={timeExpended}
         renderItem={({ item }) =>
           <View style={styles.item}>
-            <Text><View style={styleCircle(item.color)} />   {item.name} [{moment(item.start_date).format('YYYY-MM-DD')}] - horas: {moment(item.end_date).diff(moment(item.start_date), 'hours', true).toFixed(2)}</Text>
+            <Text><View style={styleCircle(item.color)}></View>   {item.key} [{item.startDate}] - horas: {moment(item.endDate).diff(moment(item.startDate), 'hours', true).toFixed(2)}</Text>
           </View>
         }
         keyExtractor={(item, index) => index.toString()}
