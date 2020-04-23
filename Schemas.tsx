@@ -79,3 +79,10 @@ export function addTimeExpended(timeExpended: any): any {
         project.timeExpended.push(timeExpended)
     })
 }
+
+export function clearAllData(){
+    realm.write(() => {
+        realm.delete(realm.objects('CurrentProject'))
+        realm.delete(realm.objects(PROJECT_SCHEMA))
+    })   
+}
