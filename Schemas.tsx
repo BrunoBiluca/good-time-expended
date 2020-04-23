@@ -1,56 +1,81 @@
-import Realm from 'realm'
+import Realm, { List } from 'realm'
 
 export const PROJECT_SCHEMA = "Project"
 export const TIME_EXPENDED_SCHEMA = "TimeExpended"
 
-export const ProjectSchema: Realm.ObjectSchema = {
+export const ProjectSchema = {
     name: PROJECT_SCHEMA,
     primaryKey: 'key',
     properties: {
         key: 'string',
         name: 'string',
-        parentProject: 'string',
         color: 'string',
-        goal: 'float',
-        timeExpended: {
-            type: "list", objectType: TIME_EXPENDED_SCHEMA
-        },
-        createdAt: 'date'
+        parentProject: { type: 'string', optional: true, default: '' },
+        goal: { type: 'float', optional: true, default: 0 },
+        active: { type: 'bool', default: true },
+        timeExpended: { type: TIME_EXPENDED_SCHEMA + "[]", default: [] },
+        createdAt: { type: 'date', default: new Date(Date.now()) }
     }
 }
 
 export const TimeExpendedSchema = {
     name: TIME_EXPENDED_SCHEMA,
     properties: {
-        start_date: 'string',
-        end_date: 'string'
+        key: 'string',
+        startDate: 'string',
+        endDate: 'string'
+    }
+}
+
+export const CurrentProjectSchema = {
+    name: 'CurrentProject',
+    primaryKey: 'key',
+    properties: {
+        key: 'string',
+        startDate: {type: 'string', optional: true, default: undefined},
+        endDate: {type: 'string', optional: true, default: undefined}
     }
 }
 
 const databaseOptions: Realm.Configuration = {
     path: 'GoodTimeExpended.realm',
-    schema: [ProjectSchema, TimeExpendedSchema],
+    schema: [ProjectSchema, TimeExpendedSchema, CurrentProjectSchema],
     schemaVersion: 0
 }
-export function insertProject(newProject: any){
-    return new Promise((resolve, reject) => {
-        Realm.open(databaseOptions)
-        .then(realm => {
-            realm.create(PROJECT_SCHEMA, newProject)
-            resolve(newProject)
-            realm.close()
-        })
-        .catch((error) => reject(error))
+const realm = new Realm(databaseOptions)
+
+
+export function insertProject(newProject: any) {
+    realm.write(() => {
+        realm.create(PROJECT_SCHEMA, newProject)
     })
 }
 
-export function getAllProjects(){
-    return new Promise((resolve, reject) => {
-        Realm.open(databaseOptions)
-        .then(realm => {
-            resolve(realm.objects(PROJECT_SCHEMA))
-            realm.close()
-        })
-        .catch((error) => reject(error))
+export function getAllProjects(): Realm.Results<any> {
+    let projects = realm.objects(ProjectSchema.name)
+    return projects
+}
+
+export function getAllTimeExpended(): Realm.Results<any> {
+    return realm.objects(TimeExpendedSchema.name)
+}
+
+export function getCurrentProject(): any {
+    return {...realm.objects('CurrentProject')[0]}
+}
+
+export function updateCurrentProject(project: any) {
+    realm.write(() => {
+        realm.delete(realm.objects('CurrentProject'))
+        realm.create('CurrentProject', project)
+    })
+}
+
+export function addTimeExpended(timeExpended: any): any {
+    realm.write(() => {
+        let project = realm.objectForPrimaryKey(ProjectSchema.name, timeExpended.key) as any
+        if(!project) return;
+
+        project.timeExpended.push(timeExpended)
     })
 }

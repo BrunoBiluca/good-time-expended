@@ -1,94 +1,87 @@
 import React, { useState, useEffect } from 'react'
-import moment, { Moment } from 'moment'
+import moment from 'moment'
 import { StyleSheet, Text, View, Button, FlatList, TouchableHighlight, Modal } from 'react-native'
 import { Icon } from 'react-native-elements'
+import { getAllProjects, getCurrentProject, addTimeExpended, updateCurrentProject } from './Schemas'
 
 export default function Home({ navigation, route }: any) {
-  // TODO: Exibir o último tempo contabilizado
 
-  // TODO: substituir pelas informações do banco
-  const data = [
-    { key: 'estudo', name: 'Estudo', parentProject: undefined, active: true, color: 'blue', timeExpended: [] as any },
-    { key: 'trabalho', name: 'Trabalho', parentProject: undefined, active: false, color: 'green', timeExpended: [] as any },
-    { key: 'atividades-fisicas', name: 'Atividades físicas', parentProject: undefined, active: false, color: 'orange', timeExpended: [] as any },
-    { key: 'taekwondo', name: 'Taekwondo', parentProject: 'atividades-fisicas', active: false, color: 'orange', timeExpended: [] as any }
-  ]
-
-  var [userProjects, setUserProject] = useState(data)
+  var [userProjects, setUserProjects] = useState(getAllProjects())
 
   useEffect(() => {
     if (route.params?.newProject) {
-      userProjects.push(route.params?.newProject)
-      setUserProject([...userProjects])
+      setUserProjects(getAllProjects())
     }
   }, [route.params?.newProject]);
 
-  var [modalState, setModalState] = useState({ visible: false, body: <View></View> })
-  // TODO: fazer isso ser a última registrada
-  var [isActivityStarted, setIsActivityStarted] = useState(false)
-  var [currentStartDate, setCurrentStartDate] = useState(undefined as unknown as Moment)
+  var [currentProject, setCurrentProject] = useState(getCurrentProject())
 
-  var motivationalPhrases = [
-    'Não esqueça de beber água, tá?'
-  ]
+  let selectProject = function (projectKey: String) {
+    let project = {
+      key: projectKey,
+      startDate: undefined,
+      endDate: undefined
+    }
+    setCurrentProject(project)
+    updateCurrentProject(project)
+  }
 
   let styleCircle = function (color: String): any {
     return { ...styles.circle, backgroundColor: color }
   }
 
-  let selectProject = function (projectKey: String) {
-    userProjects.map(p => {
-      if (p.key == projectKey) p.active = true
-      else p.active = false
-    })
-    setUserProject([...userProjects])
-    setIsActivityStarted(false)
-  }
+  var [modalState, setModalState] = useState({ visible: false, body: <View></View> })
+
+  var motivationalPhrases = [
+    'Não esqueça de beber água, tá?'
+  ]
 
   let activeButton = function () {
-    if (!isActivityStarted) {
+    if (!currentProject.startDate) {
       return (
-        <Button title="Começar" color="green"
-          onPress={() => {
-            let activity = userProjects.find((p) => p.active)
-            if (activity === undefined) return
+        <View>
+          <Button title="Começar" color="green"
+            onPress={() => {
+              if (!currentProject.key) return
 
-            setCurrentStartDate(moment())
-            setIsActivityStarted(true)
+              currentProject.startDate = moment().format("YYYY-MM-DD HH:mm:ss")
+              setCurrentProject({ ...currentProject })
+              updateCurrentProject(currentProject)
 
-            let modalBody = (
-              <Text>
-                <Text>Você começou </Text>
-                <Text style={{ fontWeight: "bold" }}>{activity.name}</Text>
-                <Text>, tenha uma ótima atividade!{"\n\n"}{motivationalPhrases}</Text>
-              </Text>
-            )
-            setModalState({ visible: true, body: modalBody })
-          }}
-        />
+              let modalBody = (
+                <Text>
+                  <Text>Você começou </Text>
+                  <Text style={{ fontWeight: "bold" }}>{currentProject.key}</Text>
+                  <Text>, tenha uma ótima atividade!{"\n\n"}{motivationalPhrases}</Text>
+                </Text>
+              )
+              setModalState({ visible: true, body: modalBody })
+            }}
+          />
+        </View>
       )
     } else {
       return (
-        <Button title="Terminar" color="red"
-          onPress={() => {
-            let activity = userProjects.find((p) => p.active)
-            if (activity === undefined) return
+        <View>
+          <Button title="Terminar" color="red"
+            onPress={() => {
+              currentProject.endDate = moment().format("YYYY-MM-DD HH:mm:ss")
+              addTimeExpended(currentProject)
 
-            let end_date = moment()
-            activity.timeExpended.push({ start_date: currentStartDate, end_date: end_date })
-            setUserProject([...userProjects])
-            setIsActivityStarted(false)
+              selectProject(currentProject.key)
 
-            let modalBody = (
-              <Text>
-                <Text>Você terminou </Text>
-                <Text style={{ fontWeight: "bold" }}>{activity.name}</Text>
-                <Text>, parabéns pelo incrível tempo investido!</Text>
-              </Text>
-            )
-            setModalState({ visible: true, body: modalBody })
-          }}
-        />
+              let modalBody = (
+                <Text>
+                  <Text>Você terminou </Text>
+                  <Text style={{ fontWeight: "bold" }}>{currentProject.key}</Text>
+                  <Text>, parabéns pelo incrível tempo investido!</Text>
+                </Text>
+              )
+              setModalState({ visible: true, body: modalBody })
+            }}
+          />
+          <Text>Projeto Atual: {currentProject.key}</Text>
+        </View>
       )
     }
   }
@@ -141,7 +134,7 @@ export default function Home({ navigation, route }: any) {
         <FlatList
           data={userProjects}
           extraData={userProjects}
-          renderItem={({ item, index }) =>
+          renderItem={({ item }) =>
             <TouchableHighlight onPress={() => selectProject(item.key)}>
               <View style={[styles.item, { paddingHorizontal: 20, borderColor: '#878787', borderTopWidth: 1 }]}>
                 <View style={[{ paddingHorizontal: 10 }, !item.parentProject ? { display: 'none' } : { display: 'flex' }]}>
@@ -150,7 +143,7 @@ export default function Home({ navigation, route }: any) {
                 <Text style={{ flex: 1 }}>
                   <View style={styleCircle(item.color)} />   {item.name}
                 </Text>
-                <View style={[!item.active ? { display: 'none' } : { display: 'flex' }]}>
+                <View style={[item.key == currentProject.key ? { display: 'flex' } : { display: 'none' }]}>
                   <Icon size={28} color='green' name='check-circle' />
                 </View>
               </View>
