@@ -55,7 +55,8 @@ export default function Graphics({ navigation }: any) {
     })
   }
 
-  var [screen, setScreen] = useState({ numColumns: 2, width: 0, height: 0, maxValue: maxValue })
+  var [screen, setScreen] = useState({ numColumns: 2, width: 0, height: 0, maxValue: Math.round(maxValue) })
+  console.log(screen.maxValue % 5)
 
   let styleCircle = function (color: String, size: number = 30): any {
     return {
@@ -104,7 +105,7 @@ export default function Graphics({ navigation }: any) {
           data={chartData}
           width={screen.width > chartData.labels.length * 70 ? screen.width : chartData.labels.length * 70}
           height={220}
-          segments={maxValue}
+          segments={screen.maxValue % 7 > 2 ? screen.maxValue % 7 : 2}
         />
       </ScrollView>
     </SafeAreaView>

@@ -36,6 +36,13 @@ export default function Home({ navigation, route }: any) {
     'Não esqueça de beber água, tá?'
   ]
 
+  var [realtimeHourCounter, setRealtimeHourCounter] = useState(moment().diff(moment(currentProject.startDate), 'hours', true).toFixed(2))
+
+  var id = setInterval(() => {
+    setRealtimeHourCounter(moment().diff(moment(currentProject.startDate), 'hours', true).toFixed(2))
+  }, 1000)
+  var [realtimeIntervalId, setRealtimeIntervalId] = useState(id)
+
   let activeButton = function () {
     if (!currentProject.startDate) {
       return (
@@ -48,6 +55,12 @@ export default function Home({ navigation, route }: any) {
               setCurrentProject({ ...currentProject })
               updateCurrentProject(currentProject)
 
+              clearInterval(realtimeIntervalId)
+              var id = setInterval(() => {
+                setRealtimeHourCounter(moment().diff(moment(currentProject.startDate), 'hours', true).toFixed(2))
+              }, 1000)
+              setRealtimeIntervalId(id)
+              
               let modalBody = (
                 <Text>
                   <Text>Você começou </Text>
@@ -80,7 +93,7 @@ export default function Home({ navigation, route }: any) {
               setModalState({ visible: true, body: modalBody })
             }}
           />
-          <Text>Projeto Atual: {currentProject.key}</Text>
+          <Text>Projeto Atual: {currentProject.key} - {realtimeHourCounter}h</Text>
         </View>
       )
     }
