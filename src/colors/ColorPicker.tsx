@@ -347,7 +347,6 @@ export function getListColors(size: number) {
     let colors = []
     for (let index = 0; index < size; index++) {
         let idxColor = Math.floor(Math.random() * allColors.length)
-        console.log(idxColor)
         colors.push({code: allColors[idxColor].code, name: allColors[idxColor].name.toLowerCase()})
     }
     return colors

@@ -3,6 +3,7 @@ import moment from 'moment'
 import { StyleSheet, Text, View, FlatList, TouchableHighlight, Modal, Alert } from 'react-native'
 import { Icon, Button } from 'react-native-elements'
 import { getAllProjects, getCurrentProject, addTimeExpended, updateCurrentProject, deleteProject } from '../database/Schemas'
+import { ScrollView } from 'react-native-gesture-handler'
 
 export default function Home({ navigation, route }: any) {
 
@@ -45,14 +46,14 @@ export default function Home({ navigation, route }: any) {
 
   var [realtimeHourCounter, setRealtimeHourCounter] = useState(updateRealtimeCounter())
 
-  let initial_id = setInterval(() => {setRealtimeHourCounter(updateRealtimeCounter())}, 1000)
+  let initial_id = setInterval(() => { setRealtimeHourCounter(updateRealtimeCounter()) }, 1000)
   var [realtimeIntervalId, setRealtimeIntervalId] = useState(initial_id)
 
   let activeButton = function () {
     if (!currentProject.startDate) {
       return (
         <View>
-          <Button title="Começar" buttonStyle={{backgroundColor: 'green'}}
+          <Button title="Começar" buttonStyle={{ backgroundColor: 'green' }}
             onPress={() => {
               if (!currentProject.key) return
 
@@ -61,7 +62,7 @@ export default function Home({ navigation, route }: any) {
               updateCurrentProject(currentProject)
 
               clearInterval(realtimeIntervalId)
-              let id = setInterval(() => {setRealtimeHourCounter(updateRealtimeCounter())}, 1000)
+              let id = setInterval(() => { setRealtimeHourCounter(updateRealtimeCounter()) }, 1000)
               setRealtimeIntervalId(id)
 
               let modalBody = (
@@ -79,7 +80,7 @@ export default function Home({ navigation, route }: any) {
     } else {
       return (
         <View>
-          <Button title="Terminar" buttonStyle={{backgroundColor: 'red'}}
+          <Button title="Terminar" buttonStyle={{ backgroundColor: 'red' }}
             onPress={() => {
               currentProject.endDate = moment().format("YYYY-MM-DD HH:mm:ss")
               addTimeExpended(currentProject)
@@ -103,18 +104,18 @@ export default function Home({ navigation, route }: any) {
   }
 
   const deleteProjectAlert = (projetoKey: string) =>
-  Alert.alert(
-    "Confirmação",
-    "Tem certeza em deletar todos os dados do aplicativo? (Ainda não temos a funcionalidade de backup)",
-    [
-      {
-        text: "Cancel",
-        style: "cancel"
-      },
-      { text: "OK", onPress: () => deleteProject(projetoKey) }
-    ],
-    { cancelable: false }
-  );
+    Alert.alert(
+      "Confirmação",
+      "Tem certeza em deletar todos os dados do aplicativo? (Ainda não temos a funcionalidade de backup)",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "OK", onPress: () => deleteProject(projetoKey) }
+      ],
+      { cancelable: false }
+    );
 
   return (
     <View style={styles.container}>
@@ -135,14 +136,21 @@ export default function Home({ navigation, route }: any) {
         </View>
       </Modal>
 
-      <View style={{ flex: 1, flexDirection: 'row' }}>
-        <View style={{ flex: 1, paddingHorizontal: 20, paddingVertical: 20, paddingRight: 10 }}>
+      <ScrollView style={{flex:1}} horizontal={true} >
+        <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingLeft: 20 }}>
           <Button title="Log de Tempo" onPress={() => navigation.navigate('TimeLog')} />
         </View>
-        <View style={{ flex: 1, paddingHorizontal: 20, paddingVertical: 20, paddingLeft: 10 }}>
-          <Button title="Gráficos" onPress={() => navigation.navigate('Graphics')} />
+        <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
+          <Button title="Horas por dia" onPress={() => navigation.navigate('GraphicsHoursByDay')} />
         </View>
-      </View>
+        <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
+          <Button title="Horas por projeto" onPress={() => navigation.navigate('GraphicsHoursByProject')} />
+        </View>
+        <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingRight: 20 }}>
+          <Button title="Horas por Meta" onPress={() => navigation.navigate('GraphicsHoursByGoal')} />
+        </View>
+      </ScrollView>
+
 
       <View style={{ flex: 1, padding: 20, paddingVertical: 0 }}>
         {activeButton()}
@@ -165,8 +173,8 @@ export default function Home({ navigation, route }: any) {
           data={userProjects}
           extraData={userProjects}
           renderItem={({ item }) =>
-            <TouchableHighlight onPress={() => selectProject(item.key)} 
-            onLongPress={() => deleteProjectAlert(item.key)}>
+            <TouchableHighlight onPress={() => selectProject(item.key)}
+              onLongPress={() => deleteProjectAlert(item.key)}>
               <View style={[styles.item, { paddingHorizontal: 20, borderColor: '#878787', borderTopWidth: 1 }]}>
                 <View style={[{ paddingHorizontal: 10 }, !item.parentProject ? { display: 'none' } : { display: 'flex' }]}>
                   <Icon size={18} color='#878787' name='subdirectory-arrow-right' />
