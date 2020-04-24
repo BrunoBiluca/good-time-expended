@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
-import { StyleSheet, Text, View, Button, FlatList, TouchableHighlight, Modal } from 'react-native'
-import { Icon } from 'react-native-elements'
-import { getAllProjects, getCurrentProject, addTimeExpended, updateCurrentProject } from './Schemas'
+import { StyleSheet, Text, View, FlatList, TouchableHighlight, Modal, Alert } from 'react-native'
+import { Icon, Button } from 'react-native-elements'
+import { getAllProjects, getCurrentProject, addTimeExpended, updateCurrentProject, deleteProject } from '../database/Schemas'
 
 export default function Home({ navigation, route }: any) {
 
@@ -36,18 +36,23 @@ export default function Home({ navigation, route }: any) {
     'Não esqueça de beber água, tá?'
   ]
 
-  var [realtimeHourCounter, setRealtimeHourCounter] = useState(moment().diff(moment(currentProject.startDate), 'hours', true).toFixed(2))
+  var updateRealtimeCounter = function () {
+    let diff_in_seconds = moment().diff(moment(currentProject.startDate), 'seconds')
+    return moment().startOf('day')
+      .seconds(diff_in_seconds)
+      .format('H:mm:ss')
+  }
 
-  var id = setInterval(() => {
-    setRealtimeHourCounter(moment().diff(moment(currentProject.startDate), 'hours', true).toFixed(2))
-  }, 1000)
-  var [realtimeIntervalId, setRealtimeIntervalId] = useState(id)
+  var [realtimeHourCounter, setRealtimeHourCounter] = useState(updateRealtimeCounter())
+
+  let initial_id = setInterval(() => {setRealtimeHourCounter(updateRealtimeCounter())}, 1000)
+  var [realtimeIntervalId, setRealtimeIntervalId] = useState(initial_id)
 
   let activeButton = function () {
     if (!currentProject.startDate) {
       return (
         <View>
-          <Button title="Começar" color="green"
+          <Button title="Começar" buttonStyle={{backgroundColor: 'green'}}
             onPress={() => {
               if (!currentProject.key) return
 
@@ -56,11 +61,9 @@ export default function Home({ navigation, route }: any) {
               updateCurrentProject(currentProject)
 
               clearInterval(realtimeIntervalId)
-              var id = setInterval(() => {
-                setRealtimeHourCounter(moment().diff(moment(currentProject.startDate), 'hours', true).toFixed(2))
-              }, 1000)
+              let id = setInterval(() => {setRealtimeHourCounter(updateRealtimeCounter())}, 1000)
               setRealtimeIntervalId(id)
-              
+
               let modalBody = (
                 <Text>
                   <Text>Você começou </Text>
@@ -76,7 +79,7 @@ export default function Home({ navigation, route }: any) {
     } else {
       return (
         <View>
-          <Button title="Terminar" color="red"
+          <Button title="Terminar" buttonStyle={{backgroundColor: 'red'}}
             onPress={() => {
               currentProject.endDate = moment().format("YYYY-MM-DD HH:mm:ss")
               addTimeExpended(currentProject)
@@ -98,6 +101,20 @@ export default function Home({ navigation, route }: any) {
       )
     }
   }
+
+  const deleteProjectAlert = (projetoKey: string) =>
+  Alert.alert(
+    "Confirmação",
+    "Tem certeza em deletar todos os dados do aplicativo? (Ainda não temos a funcionalidade de backup)",
+    [
+      {
+        text: "Cancel",
+        style: "cancel"
+      },
+      { text: "OK", onPress: () => deleteProject(projetoKey) }
+    ],
+    { cancelable: false }
+  );
 
   return (
     <View style={styles.container}>
@@ -148,7 +165,8 @@ export default function Home({ navigation, route }: any) {
           data={userProjects}
           extraData={userProjects}
           renderItem={({ item }) =>
-            <TouchableHighlight onPress={() => selectProject(item.key)}>
+            <TouchableHighlight onPress={() => selectProject(item.key)} 
+            onLongPress={() => deleteProjectAlert(item.key)}>
               <View style={[styles.item, { paddingHorizontal: 20, borderColor: '#878787', borderTopWidth: 1 }]}>
                 <View style={[{ paddingHorizontal: 10 }, !item.parentProject ? { display: 'none' } : { display: 'flex' }]}>
                   <Icon size={18} color='#878787' name='subdirectory-arrow-right' />

@@ -2,14 +2,18 @@ import React, { useState } from "react"
 import { StyleSheet, View, Text, Button, Alert } from "react-native"
 import { FlatList } from "react-native-gesture-handler"
 import moment from "moment"
-import { getAllProjects, getAllTimeExpended, clearAllData } from "./Schemas"
+import { getAllProjects, getAllTimeExpended, clearAllData } from "../database/Schemas"
 
 
 export default function TimeLog({ navegation }: any) {
 
   var [userProjects] = useState(getAllProjects())
   var [timeExpended] = useState(() => {
-    return getAllTimeExpended()
+    var timeExpended = getAllTimeExpended()
+
+    if(timeExpended.isEmpty() || userProjects.isEmpty()) return []
+
+    return timeExpended
       .sorted('startDate', true)
       .map(te => {
         te['color'] = userProjects.find(p => p.key == te.key).color
