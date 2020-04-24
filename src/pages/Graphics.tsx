@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, Text, SafeAreaView, FlatList } from 'react-native';
-import { getAllProjects, getAllTimeExpended } from './Schemas';
+import { getAllProjects, getAllTimeExpended } from '../database/Schemas';
 import { useState } from 'react';
 import { StackedBarChart } from 'react-native-chart-kit'
 import { ScrollView } from 'react-native-gesture-handler';
@@ -10,6 +10,14 @@ export default function Graphics({ navigation }: any) {
   var [chartData] = useState(() => {
     let projects = getAllProjects()
     let time_expended = getAllTimeExpended()
+
+    if(projects.isEmpty() || time_expended.isEmpty()) return {
+      legend: [],
+      labels: [],
+      data: [],
+      barColors: []
+    }
+
     let legends = projects.map(p => p.key)
     let colors = projects.map(p => p.color)
     

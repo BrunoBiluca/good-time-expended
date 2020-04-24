@@ -1,12 +1,9 @@
 import React, { useState } from "react"
 import { StyleSheet, FlatList, TouchableHighlight, View, Text } from "react-native"
+import { getAllProjects } from "../database/Schemas"
 
 export default function SelectProjects({ navigation }: any) {
-  var userProjects = [
-    { key: 'estudo', name: 'Estudo', active: true, color: 'blue', timeExpended: [] as any },
-    { key: 'trabalho', name: 'Trabalho', active: false, color: 'green', timeExpended: [] as any },
-    { key: 'atividades-fisicas', name: 'Atividades físicas', active: false, color: 'orange', timeExpended: [] as any }
-  ]
+  var userProjects = getAllProjects()
 
   let styleCircle = function (color: String, size: number = 30): any {
     return {

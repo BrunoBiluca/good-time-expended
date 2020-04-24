@@ -1,20 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { View, Button, Text, Modal, TouchableHighlight, FlatList, StyleSheet } from 'react-native'
 import { Input } from 'react-native-elements'
-import { insertProject } from "./Schemas"
+import { insertProject } from "../database/Schemas"
+import { getListColors } from '../colors/ColorPicker'
 
 export default function ProjectNew({ navigation, route }: any) {
-
-  var availableColors = [
-    { color: 'aqua' },
-    { color: 'black' },
-    { color: 'blue' },
-    { color: 'fuchsia' },
-    { color: 'gray' },
-    { color: 'green' },
-    { color: 'maroon' },
-    { color: 'orange' }
-  ]
 
   var [project, setProjectState] = useState({
     key: '',
@@ -54,7 +44,7 @@ export default function ProjectNew({ navigation, route }: any) {
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <FlatList
-              data={availableColors}
+              data={getListColors(20)}
               numColumns={3}
               keyExtractor={(item, index) => index.toString()}
               renderItem={({ item }) => {
@@ -62,11 +52,11 @@ export default function ProjectNew({ navigation, route }: any) {
                   <TouchableHighlight
                     activeOpacity={0}
                     onPress={() => {
-                      project.color = item.color
+                      project.color = item.code
                       setProjectState(project)
                       setModalState({ ...modalState, visible: false })
                     }}>
-                    <View pointerEvents='none' style={[styleCircle(item.color, 30), {margin: 15}]} />
+                    <View pointerEvents='none' style={[styleCircle(item.code, 30), {margin: 15}]} />
                   </TouchableHighlight>
                 )
               }} />

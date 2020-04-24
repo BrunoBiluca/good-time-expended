@@ -51,6 +51,17 @@ export function insertProject(newProject: any) {
     })
 }
 
+export function deleteProject(projectKey: string){
+    realm.write(() => {
+        let project = realm.objectForPrimaryKey(ProjectSchema.name, projectKey) as any
+
+        project.timeExpended.forEach((timeExpended: any) => {
+            realm.delete(timeExpended)
+        });
+        realm.delete(project)
+    })
+}
+
 export function getAllProjects(): Realm.Results<any> {
     let projects = realm.objects(ProjectSchema.name)
     return projects
@@ -83,6 +94,7 @@ export function addTimeExpended(timeExpended: any): any {
 export function clearAllData(){
     realm.write(() => {
         realm.delete(realm.objects('CurrentProject'))
+        realm.delete(realm.objects(TIME_EXPENDED_SCHEMA))
         realm.delete(realm.objects(PROJECT_SCHEMA))
     })   
 }
