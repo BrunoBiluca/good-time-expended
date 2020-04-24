@@ -64,7 +64,6 @@ export default function Graphics({ navigation }: any) {
   }
 
   var [screen, setScreen] = useState({ numColumns: 2, width: 0, height: 0, maxValue: Math.round(maxValue) })
-  console.log(screen.maxValue % 5)
 
   let styleCircle = function (color: String, size: number = 30): any {
     return {
