@@ -1,9 +1,8 @@
 {
   "expo": {
-    "name": "good_time_expended",
+    "name": "Good Time Expended",
     "slug": "good_time_expended",
     "platforms": [
-      "ios",
       "android",
       "web"
     ],
