@@ -4,48 +4,51 @@ import { getAllProjects, getAllTimeExpended } from '../database/Schemas';
 import { useState } from 'react';
 import { StackedBarChart } from 'react-native-chart-kit'
 import { ScrollView } from 'react-native-gesture-handler';
-import moment from 'moment';
+import moment, { Moment } from 'moment';
+import ProjectLabelComponent from '../ProjectLabelComponent';
 
 export default function Graphics({ navigation }: any) {
-  var [chartData] = useState(() => {
-    let projects = getAllProjects()
-    let time_expended = getAllTimeExpended()
+  let projects = getAllProjects().filtered('timeExpended.@size > 0')
+  if (projects.isEmpty()) return (<View><Text>Não foram encontrados dados</Text></View>)
 
-    if(projects.isEmpty() || time_expended.isEmpty()) return {
-      legend: [],
-      labels: [],
-      data: [],
-      barColors: []
+  var getDaysArray = function (start: Moment, end: Moment, format: string = 'YYYY-MM-DD') {
+    for (var arr = [], dt = start; dt <= end; dt = (dt.add(1, 'day'))) {
+      arr.push(dt.format(format));
     }
+    return arr;
+  };
+
+  var [chartData] = useState(() => {
+    let time_expended = getAllTimeExpended()
 
     let legends = projects.map(p => p.key)
     let colors = projects.map(p => p.color)
-    
-    var labels: String[] = []
+
+    var date_labels: String[] = getDaysArray(moment().subtract(30, 'days'), moment())
+      .sort()
+      .reverse()
+
+    var data = Array.from({ length: date_labels.length }, e =>
+      Array.from({ length: legends.length }, e => 0)
+    )
 
     time_expended.map((te) => {
       let date = te.startDate.split(' ')[0]
-      if(!labels.includes(date)){
-        labels.push(date)
-      }
-    })
-
-    var data: number[][] = [...Array(labels.length).fill(Array(legends.length).fill(0))]
-    time_expended.map((te) => {
-      let date = te.startDate.split(' ')[0]
-      let idx_label = labels.indexOf(date)
+      let idx_label = date_labels.indexOf(date)
       let idx_legend = legends.indexOf(te.key)
       let hours = parseFloat(moment(te.endDate).diff(moment(te.startDate), 'hours', true).toFixed(2))
-      data[idx_label][idx_legend] = data[idx_label][idx_legend] + (hours + 1)
+      data[idx_label][idx_legend] += hours
     })
 
     return {
-      legend: legends as string[],
-      labels: labels as string[],
+      legend: [],
+      labels: date_labels as string[],
       data: data,
       barColors: colors as string[]
     }
   })
+
+  let chartInfo = projects.map(p => { return { name: p.name, color: p.color } })
 
   let maxValue = 0
   chartData.data.map((te) => {
@@ -54,14 +57,6 @@ export default function Graphics({ navigation }: any) {
       maxValue = sum
     }
   })
-
-  let chartInfo = []
-  for (let index = 0; index < chartData.labels.length; index++) {
-    chartInfo.push({
-      color: chartData.barColors[index],
-      name: chartData.legend[index]
-    })
-  }
 
   var [screen, setScreen] = useState({ numColumns: 2, width: 0, height: 0, maxValue: Math.round(maxValue) })
 
@@ -82,15 +77,9 @@ export default function Graphics({ navigation }: any) {
           key={screen.numColumns}
           numColumns={screen.numColumns}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => {
-            return (
-              <View style={{ flex: 1, marginHorizontal: 5, flexDirection: 'row', alignItems: 'center' }}>
-                <View style={[styleCircle(item.color, 15), { marginRight: 5 }]} />
-                <Text>{item.name}</Text>
-              </View>
-            )
-          }} />
+          renderItem={({ item }) => <ProjectLabelComponent project={item} size={15} />} />
       </View>
+
       <ScrollView horizontal={true} onLayout={(event) => {
         setScreen({
           numColumns: event.nativeEvent.layout.width > event.nativeEvent.layout.height ? 3 : 2,

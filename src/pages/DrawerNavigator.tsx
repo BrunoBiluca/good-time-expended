@@ -2,11 +2,10 @@ import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './Home';
-import Graphics from './Graphics';
+import Graphics from './GraphicsHoursByDay';
 import TimeLog from './TimeLog';
 import ProjectNew from './ProjectNew';
 import SelectProjects from './SelectProjects';
-import StackNavigator from './StackNavigator';
 
 const Drawer = createDrawerNavigator();
 
