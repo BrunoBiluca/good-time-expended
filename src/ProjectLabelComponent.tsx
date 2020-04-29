@@ -1,12 +1,18 @@
 import * as React from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, ViewStyle } from 'react-native'
 
 export interface ProjectModel{
     name: string
     color: string
 }
 
-export default function ProjectLabelComponent(props: any) {
+export interface ProjectLabelProps {
+    style?: ViewStyle
+    project: any
+    size: number
+}
+
+export default function ProjectLabelComponent(props: ProjectLabelProps) {
     var project: ProjectModel = props.project
     var size: number = props.size
 
@@ -25,7 +31,7 @@ export default function ProjectLabelComponent(props: any) {
     })
 
     return (
-        <View style={styles.container}>
+        <View style={[styles.container, props.style]}>
             <View style={styles.circle} />
             <Text style={styles.text}>{project.name}</Text>
         </View>

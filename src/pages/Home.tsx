@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, FlatList, TouchableHighlight, Modal, Alert } fr
 import { Icon, Button } from 'react-native-elements'
 import { getAllProjects, getCurrentProject, addTimeExpended, updateCurrentProject, deleteProject } from '../database/Schemas'
 import { ScrollView } from 'react-native-gesture-handler'
+import ProjectLabelComponent from '../ProjectLabelComponent'
+import { ProjectSelectItemComponent } from '../ProjectSelectItemComponent'
 
 export default function Home({ navigation, route }: any) {
 
@@ -117,6 +119,9 @@ export default function Home({ navigation, route }: any) {
       { cancelable: false }
     );
 
+  console.log(userProjects.slice().map(p => p.name))
+  console.log(userProjects.slice().sort((a, b) => a.name < b.name ? -1 : 1).map(p => p.name))
+
   return (
     <View style={styles.container}>
       <Modal
@@ -136,7 +141,7 @@ export default function Home({ navigation, route }: any) {
         </View>
       </Modal>
 
-      <ScrollView style={{flex:1}} horizontal={true} >
+      <ScrollView style={{ flex: 1 }} horizontal={true} >
         <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingLeft: 20 }}>
           <Button title="Log de Tempo" onPress={() => navigation.navigate('TimeLog')} />
         </View>
@@ -170,23 +175,16 @@ export default function Home({ navigation, route }: any) {
           </View>
         </View>
         <FlatList
-          data={userProjects}
-          extraData={userProjects}
+          data={userProjects.slice().sort((a, b) => a.name < b.name ? -1 : 1)}
+          extraData={userProjects.slice().sort((a, b) => a.name < b.name ? -1 : 1)}
           renderItem={({ item }) =>
-            <TouchableHighlight onPress={() => selectProject(item.key)}
-              onLongPress={() => deleteProjectAlert(item.key)}>
-              <View style={[styles.item, { paddingHorizontal: 20, borderColor: '#878787', borderTopWidth: 1 }]}>
-                <View style={[{ paddingHorizontal: 10 }, !item.parentProject ? { display: 'none' } : { display: 'flex' }]}>
-                  <Icon size={18} color='#878787' name='subdirectory-arrow-right' />
-                </View>
-                <Text style={{ flex: 1 }}>
-                  <View style={styleCircle(item.color)} />   {item.name}
-                </Text>
-                <View style={[item.key == currentProject.key ? { display: 'flex' } : { display: 'none' }]}>
-                  <Icon size={28} color='green' name='check-circle' />
-                </View>
-              </View>
-            </TouchableHighlight>
+            <ProjectSelectItemComponent
+              style={{ paddingHorizontal: 20, borderColor: '#878787', borderTopWidth: 1 }} 
+              project={item}
+              isSelected={item.key == currentProject.key}
+              onPress={() => selectProject(item.key)}
+              onLongPress={() => deleteProjectAlert(item.key)}
+            />
           }
         />
       </View>
