@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
 import Home from './Home';
-import Graphics from './GraphicsHoursByDay';
+import Graphics from '../graphics/GraphicsHoursByDay';
 import TimeLog from './TimeLog';
 import ProjectNew from './ProjectNew';
 import SelectProjects from './SelectProjects';

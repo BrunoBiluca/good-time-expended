@@ -2,12 +2,12 @@ import * as React from 'react';
 import {NavigationContainer, DrawerActions} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Home from './Home';
-import Graphics from './GraphicsHoursByDay';
+import Graphics from '../graphics/GraphicsHoursByDay';
 import TimeLog from './TimeLog';
 import ProjectNew from './ProjectNew';
 import SelectProjects from './SelectProjects';
-import GraphicsHoursByProject from './GraphicsHoursByProject';
-import GraphicsHoursByGoal from './GraphicsHoursByGoal';
+import GraphicsHoursByProject from '../graphics/GraphicsHoursByProject';
+import GraphicsHoursByGoal from '../graphics/GraphicsHoursByGoal';
 
 const Stack = createStackNavigator();
 

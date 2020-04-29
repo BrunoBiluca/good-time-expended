@@ -7,13 +7,14 @@ import { ScrollView } from 'react-native-gesture-handler'
 
 export default function GraphicsHoursByGoal() {
   var userProjects = getAllProjects()
+    .filter(p => p.goal != 0)
+    .sort((a, b) => b.name - a.name)
 
   var projectsByHours = userProjects.map((p) => {
-    if (p.timeExpended.isEmpty()) return { ...p, total: 0 }
     let totalHours = p.timeExpended.reduce((total: number, te: any) => {
       total += parseFloat(moment(te.endDate).diff(moment(te.startDate), 'hours', true).toFixed(2))
       return total
-    })
+    }, 0)
     return { ...p, total: totalHours }
   })
   var screen = Dimensions.get('window')
@@ -25,7 +26,7 @@ export default function GraphicsHoursByGoal() {
         renderItem={({ item }) => {
           let data = {
             labels: [""],
-            data: [item.total == 0 ? 0 : item.goal / item.total]
+            data: [item.total / item.goal]
           }
 
           return (

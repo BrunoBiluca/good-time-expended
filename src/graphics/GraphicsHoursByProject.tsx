@@ -8,14 +8,15 @@ import { ScrollView } from 'react-native-gesture-handler'
 export default function GraphicsHoursByProject() {
   var userProjects = getAllProjects()
 
-  var projectsByHours = userProjects.map((p) => {
-    if (p.timeExpended.isEmpty()) return { ...p, total: 0 }
-    let totalHours = p.timeExpended.reduce((total: number, te: any) => {
-      total += parseFloat(moment(te.endDate).diff(moment(te.startDate), 'hours', true).toFixed(2))
-      return total
+  var projectsByHours = userProjects
+    .map((p) => {
+      let totalHours = p.timeExpended.reduce((total: number, te: any) => {
+        total += parseFloat(moment(te.endDate).diff(moment(te.startDate), 'hours', true).toFixed(2))
+        return total
+      }, 0)
+      return { ...p, total: totalHours }
     })
-    return { ...p, total: totalHours }
-  })
+    .sort((a, b) => b.total - a.total) // DESC
 
   const dataAllProjects = {
     labels: projectsByHours.map(p => p.name),
@@ -25,7 +26,6 @@ export default function GraphicsHoursByProject() {
       }
     ]
   }
-
   var screen = Dimensions.get('window')
 
   return (
@@ -34,7 +34,7 @@ export default function GraphicsHoursByProject() {
         <BarChart
           data={dataAllProjects}
           width={screen.width > dataAllProjects.labels.length * 70 ? screen.width : dataAllProjects.labels.length * 70}
-          height={screen.height - 100}
+          height={screen.height - 150}
           yAxisLabel=""
           yAxisSuffix="h"
           chartConfig={{
@@ -43,7 +43,10 @@ export default function GraphicsHoursByProject() {
             backgroundColor: "#fff",
             backgroundGradientFrom: "#fff",
             backgroundGradientTo: "#fff",
-            barPercentage: 0.7
+            barPercentage: 0.7,
+            propsForLabels: {
+              dx: -10
+            }
           }}
           fromZero={true}
           verticalLabelRotation={30}
