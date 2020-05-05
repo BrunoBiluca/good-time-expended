@@ -33,7 +33,7 @@ export default function GraphicsHoursByProject() {
       <ScrollView horizontal={true}>
         <BarChart
           data={dataAllProjects}
-          width={screen.width > dataAllProjects.labels.length * 70 ? screen.width : dataAllProjects.labels.length * 70}
+          width={screen.width > dataAllProjects.labels.length * 70 ? screen.width + 100 : dataAllProjects.labels.length * 70}
           height={screen.height - 150}
           yAxisLabel=""
           yAxisSuffix="h"

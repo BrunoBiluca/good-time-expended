@@ -1,37 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
-import { StyleSheet, Text, View, FlatList, TouchableHighlight, Modal, Alert } from 'react-native'
-import { Icon, Button } from 'react-native-elements'
-import { getAllProjects, getCurrentProject, addTimeExpended, updateCurrentProject, deleteProject } from '../database/Schemas'
+import { StyleSheet, Text, View, TouchableHighlight, Modal } from 'react-native'
+import { Button } from 'react-native-elements'
+import { getCurrentProject, addTimeExpended, updateCurrentProject } from '../database/Schemas'
 import { ScrollView } from 'react-native-gesture-handler'
-import ProjectLabelComponent from '../ProjectLabelComponent'
-import { ProjectSelectItemComponent } from '../ProjectSelectItemComponent'
+import ProjectSelectComponent from '../ProjectSelectComponent'
 
 export default function Home({ navigation, route }: any) {
-
-  var [userProjects, setUserProjects] = useState(getAllProjects())
-
-  useEffect(() => {
-    if (route.params?.newProject) {
-      setUserProjects(getAllProjects())
-    }
-  }, [route.params?.newProject]);
-
   var [currentProject, setCurrentProject] = useState(getCurrentProject())
-
-  let selectProject = function (projectKey: String) {
-    let project = {
-      key: projectKey,
-      startDate: undefined,
-      endDate: undefined
-    }
-    setCurrentProject(project)
-    updateCurrentProject(project)
-  }
-
-  let styleCircle = function (color: String): any {
-    return { ...styles.circle, backgroundColor: color }
-  }
 
   var [modalState, setModalState] = useState({ visible: false, body: <View></View> })
 
@@ -40,16 +16,17 @@ export default function Home({ navigation, route }: any) {
   ]
 
   var updateRealtimeCounter = function () {
-    let diff_in_seconds = moment().diff(moment(currentProject.startDate), 'seconds')
+    console.log(getCurrentProject().startDate)
+    let diff_in_seconds = moment().diff(moment(getCurrentProject().startDate), 'seconds')
     return moment().startOf('day')
       .seconds(diff_in_seconds)
       .format('H:mm:ss')
   }
 
-  var [realtimeHourCounter, setRealtimeHourCounter] = useState(updateRealtimeCounter())
-
-  let initial_id = setInterval(() => { setRealtimeHourCounter(updateRealtimeCounter()) }, 1000)
-  var [realtimeIntervalId, setRealtimeIntervalId] = useState(initial_id)
+  var [realtimeHourCounter, setRealtimeHourCounter] = useState("")
+  useEffect(() => {
+    setInterval(() => { setRealtimeHourCounter(updateRealtimeCounter()) }, 1000)
+  }, []);
 
   let activeButton = function () {
     if (!currentProject.startDate) {
@@ -62,10 +39,6 @@ export default function Home({ navigation, route }: any) {
               currentProject.startDate = moment().format("YYYY-MM-DD HH:mm:ss")
               setCurrentProject({ ...currentProject })
               updateCurrentProject(currentProject)
-
-              clearInterval(realtimeIntervalId)
-              let id = setInterval(() => { setRealtimeHourCounter(updateRealtimeCounter()) }, 1000)
-              setRealtimeIntervalId(id)
 
               let modalBody = (
                 <Text>
@@ -87,8 +60,14 @@ export default function Home({ navigation, route }: any) {
               currentProject.endDate = moment().format("YYYY-MM-DD HH:mm:ss")
               addTimeExpended(currentProject)
 
-              selectProject(currentProject.key)
-
+              let project = {
+                key: currentProject.key,
+                startDate: undefined,
+                endDate: undefined
+              }
+              updateCurrentProject(project)
+              setCurrentProject(project)
+              
               let modalBody = (
                 <Text>
                   <Text>Você terminou </Text>
@@ -104,23 +83,6 @@ export default function Home({ navigation, route }: any) {
       )
     }
   }
-
-  const deleteProjectAlert = (projetoKey: string) =>
-    Alert.alert(
-      "Confirmação",
-      "Tem certeza em deletar todos os dados do aplicativo? (Ainda não temos a funcionalidade de backup)",
-      [
-        {
-          text: "Cancel",
-          style: "cancel"
-        },
-        { text: "OK", onPress: () => deleteProject(projetoKey) }
-      ],
-      { cancelable: false }
-    );
-
-  console.log(userProjects.slice().map(p => p.name))
-  console.log(userProjects.slice().sort((a, b) => a.name < b.name ? -1 : 1).map(p => p.name))
 
   return (
     <View style={styles.container}>
@@ -161,33 +123,7 @@ export default function Home({ navigation, route }: any) {
         {activeButton()}
       </View>
 
-      <View style={{ flex: 5 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-          <Text style={{ paddingHorizontal: 20, fontSize: 24 }}>Projetos</Text>
-          <View style={{ paddingHorizontal: 20 }}>
-            <Icon
-              size={36}
-              name='add-circle-outline'
-              onPress={() => {
-                navigation.navigate('ProjectNew')
-              }}
-            />
-          </View>
-        </View>
-        <FlatList
-          data={userProjects.slice().sort((a, b) => a.name < b.name ? -1 : 1)}
-          extraData={userProjects.slice().sort((a, b) => a.name < b.name ? -1 : 1)}
-          renderItem={({ item }) =>
-            <ProjectSelectItemComponent
-              style={{ paddingHorizontal: 20, borderColor: '#878787', borderTopWidth: 1 }} 
-              project={item}
-              isSelected={item.key == currentProject.key}
-              onPress={() => selectProject(item.key)}
-              onLongPress={() => deleteProjectAlert(item.key)}
-            />
-          }
-        />
-      </View>
+      <ProjectSelectComponent style={{ flex: 5 }} />
     </View>
   )
 }

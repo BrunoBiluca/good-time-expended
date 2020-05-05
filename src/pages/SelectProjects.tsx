@@ -3,7 +3,7 @@ import { StyleSheet, FlatList, TouchableHighlight, View, Text } from "react-nati
 import { getAllProjects } from "../database/Schemas"
 
 export default function SelectProjects({ navigation }: any) {
-  var userProjects = getAllProjects()
+  var userProjects = getAllProjects().filtered('parentProject = ""')
 
   let styleCircle = function (color: String, size: number = 30): any {
     return {

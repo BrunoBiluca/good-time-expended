@@ -96,7 +96,10 @@ export default function Graphics({ navigation }: any) {
             backgroundColor: "#fff",
             backgroundGradientFrom: "#fff",
             backgroundGradientTo: "#fff",
-            barPercentage: 0.7
+            barPercentage: 1,
+            propsForLabels: {
+              dx: -10
+            }
           }}
           data={chartData}
           width={screen.width > chartData.labels.length * 70 ? screen.width : chartData.labels.length * 70}
