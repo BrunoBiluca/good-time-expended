@@ -62,6 +62,7 @@ export default function ProjectSelectComponent(props: any) {
             startDate: undefined,
             endDate: undefined
         }
+        props.updateCurrentProject(project)
         setCurrentProject(project)
         updateCurrentProject(project)
     }

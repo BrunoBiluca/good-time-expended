@@ -5,6 +5,7 @@ import { Button } from 'react-native-elements'
 import { getCurrentProject, addTimeExpended, updateCurrentProject } from '../database/Schemas'
 import { ScrollView } from 'react-native-gesture-handler'
 import ProjectSelectComponent from '../ProjectSelectComponent'
+import CurrentProjectHourCounterComponent from '../CurrentProjectHourCounterComponent'
 
 export default function Home({ navigation, route }: any) {
   var [currentProject, setCurrentProject] = useState(getCurrentProject())
@@ -14,19 +15,6 @@ export default function Home({ navigation, route }: any) {
   var motivationalPhrases = [
     'Não esqueça de beber água, tá?'
   ]
-
-  var updateRealtimeCounter = function () {
-    console.log(getCurrentProject().startDate)
-    let diff_in_seconds = moment().diff(moment(getCurrentProject().startDate), 'seconds')
-    return moment().startOf('day')
-      .seconds(diff_in_seconds)
-      .format('H:mm:ss')
-  }
-
-  var [realtimeHourCounter, setRealtimeHourCounter] = useState("")
-  useEffect(() => {
-    setInterval(() => { setRealtimeHourCounter(updateRealtimeCounter()) }, 1000)
-  }, []);
 
   let activeButton = function () {
     if (!currentProject.startDate) {
@@ -78,7 +66,7 @@ export default function Home({ navigation, route }: any) {
               setModalState({ visible: true, body: modalBody })
             }}
           />
-          <Text>Projeto Atual: {currentProject.key} - {realtimeHourCounter}h</Text>
+          <CurrentProjectHourCounterComponent currentProject={currentProject} />
         </View>
       )
     }
@@ -118,12 +106,11 @@ export default function Home({ navigation, route }: any) {
         </View>
       </ScrollView>
 
-
       <View style={{ flex: 1, padding: 20, paddingVertical: 0 }}>
         {activeButton()}
       </View>
 
-      <ProjectSelectComponent style={{ flex: 5 }} />
+      <ProjectSelectComponent style={{ flex: 5 }} updateCurrentProject={(project: any) => setCurrentProject(project)} />
     </View>
   )
 }
