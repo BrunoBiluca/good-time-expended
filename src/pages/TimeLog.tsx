@@ -1,14 +1,14 @@
-import React, { useState } from "react"
+import React, { useState, useEffect } from "react"
 import { StyleSheet, View, Text, Button, Alert } from "react-native"
 import { FlatList } from "react-native-gesture-handler"
 import moment from "moment"
 import { getAllProjects, getAllTimeExpended, clearAllData } from "../database/Schemas"
 
 
-export default function TimeLog({ navegation }: any) {
+export default function TimeLog({ navigation }: any) {
 
-  var [userProjects] = useState(getAllProjects())
-  var [timeExpended] = useState(() => {
+  function getTimeExpended(){
+    var userProjects = getAllProjects()
     var timeExpended = getAllTimeExpended()
 
     if(timeExpended.isEmpty() || userProjects.isEmpty()) return []
@@ -19,7 +19,17 @@ export default function TimeLog({ navegation }: any) {
         te['color'] = userProjects.find(p => p.key == te.key).color
         return te
       })
-  })
+  }
+
+  var [timeExpended, setTimeExpended] = useState(getTimeExpended())
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setTimeExpended(getTimeExpended())
+    });
+
+    return unsubscribe;
+  }, [navigation])
 
   let styleCircle = function (color: String): any {
     return { ...styles.circle, backgroundColor: color }

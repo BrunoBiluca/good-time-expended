@@ -6,7 +6,6 @@ import { Text } from 'react-native'
 export default function CurrentProjectHourCounterComponent(props: any) {
 
     var updateRealtimeCounter = function () {
-        console.log(props.currentProject)
         let diff_in_seconds = moment().diff(moment(props.currentProject.startDate), 'seconds')
         return moment().startOf('day')
             .seconds(diff_in_seconds)

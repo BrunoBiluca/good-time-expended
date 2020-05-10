@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import moment from 'moment'
 import { StyleSheet, Text, View, TouchableHighlight, Modal } from 'react-native'
 import { Button } from 'react-native-elements'
@@ -7,7 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import ProjectSelectComponent from '../ProjectSelectComponent'
 import CurrentProjectHourCounterComponent from '../CurrentProjectHourCounterComponent'
 
-export default function Home({ navigation, route }: any) {
+export default function Home({ navigation }: any) {
   var [currentProject, setCurrentProject] = useState(getCurrentProject())
 
   var [modalState, setModalState] = useState({ visible: false, body: <View></View> })
@@ -55,7 +55,7 @@ export default function Home({ navigation, route }: any) {
               }
               updateCurrentProject(project)
               setCurrentProject(project)
-              
+
               let modalBody = (
                 <Text>
                   <Text>Você terminou </Text>
@@ -91,22 +91,7 @@ export default function Home({ navigation, route }: any) {
         </View>
       </Modal>
 
-      <ScrollView style={{ flex: 1 }} horizontal={true} >
-        <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingLeft: 20 }}>
-          <Button title="Log de Tempo" onPress={() => navigation.navigate('TimeLog')} />
-        </View>
-        <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
-          <Button title="Horas por dia" onPress={() => navigation.navigate('GraphicsHoursByDay')} />
-        </View>
-        <View style={{ paddingHorizontal: 10, paddingVertical: 20 }}>
-          <Button title="Horas por projeto" onPress={() => navigation.navigate('GraphicsHoursByProject')} />
-        </View>
-        <View style={{ paddingHorizontal: 10, paddingVertical: 20, paddingRight: 20 }}>
-          <Button title="Horas por Meta" onPress={() => navigation.navigate('GraphicsHoursByGoal')} />
-        </View>
-      </ScrollView>
-
-      <View style={{ flex: 1, padding: 20, paddingVertical: 0 }}>
+      <View style={{ flex: 1, padding: 20, paddingVertical: 0, marginTop: 20 }}>
         {activeButton()}
       </View>
 

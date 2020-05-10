@@ -32,7 +32,7 @@ export default function GraphicsHoursByGoal() {
           return (
             <View>
               <Text>Projeto: {item.name}</Text>
-              <Text>Meta: {item.goal} horas - Atual: {item.total} horas</Text>
+              <Text>Meta: {item.goal} horas - Atual: {item.total.toFixed(2)} horas</Text>
               <ProgressChart
                 data={data}
                 width={screen.width - 100}
