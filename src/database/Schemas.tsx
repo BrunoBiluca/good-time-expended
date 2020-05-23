@@ -86,11 +86,15 @@ export function getAllTimeExpended(): Realm.Results<any> {
 }
 
 export function getCurrentProject(): any {
-    let project_properties = realm.objects('CurrentProject')[0].entries()
+    try {
+        let project_properties = realm.objects('CurrentProject')[0].entries()
 
-    let obj: any = {}
-    project_properties.map(property => obj[property[0]] = property[1])
-    return obj
+        let obj: any = {}
+        project_properties.map(property => obj[property[0]] = property[1])
+        return obj            
+    } catch (error) {
+        return {}
+    }
 }
 
 export function updateCurrentProject(project: any) {
