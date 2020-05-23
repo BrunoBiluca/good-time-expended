@@ -3,11 +3,10 @@ import moment from 'moment'
 import { StyleSheet, Text, View, TouchableHighlight, Modal } from 'react-native'
 import { Button } from 'react-native-elements'
 import { getCurrentProject, addTimeExpended, updateCurrentProject } from '../database/Schemas'
-import { ScrollView } from 'react-native-gesture-handler'
 import ProjectSelectComponent from '../ProjectSelectComponent'
 import CurrentProjectHourCounterComponent from '../CurrentProjectHourCounterComponent'
 
-export default function Home({ navigation }: any) {
+export default function Home() {
   var [currentProject, setCurrentProject] = useState(getCurrentProject())
 
   var [modalState, setModalState] = useState({ visible: false, body: <View></View> })
@@ -54,7 +53,7 @@ export default function Home({ navigation }: any) {
                 endDate: undefined
               }
               updateCurrentProject(project)
-              setCurrentProject(project)
+              setCurrentProject({ ...project })
 
               let modalBody = (
                 <Text>

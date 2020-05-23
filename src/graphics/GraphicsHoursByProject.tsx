@@ -14,7 +14,7 @@ export default function GraphicsHoursByProject() {
         total += parseFloat(moment(te.endDate).diff(moment(te.startDate), 'hours', true).toFixed(2))
         return total
       }, 0)
-      return { ...p, total: totalHours }
+      return { name: p.name, total: totalHours }
     })
     .sort((a, b) => b.total - a.total) // DESC
 
@@ -26,6 +26,7 @@ export default function GraphicsHoursByProject() {
       }
     ]
   }
+
   var screen = Dimensions.get('window')
 
   return (

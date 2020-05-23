@@ -10,6 +10,8 @@ export default function GraphicsHoursByGoal() {
     .filter(p => p.goal != 0)
     .sort((a, b) => b.name - a.name)
 
+  if(userProjects.length == 0) return (<View><Text>Não tem metas cadastradas</Text></View>)
+
   var projectsByHours = userProjects.map((p) => {
     let totalHours = p.timeExpended.reduce((total: number, te: any) => {
       total += parseFloat(moment(te.endDate).diff(moment(te.startDate), 'hours', true).toFixed(2))

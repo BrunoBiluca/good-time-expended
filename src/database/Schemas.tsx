@@ -1,4 +1,4 @@
-import Realm, { List } from 'realm'
+import Realm from 'realm'
 
 export const PROJECT_SCHEMA = "Project"
 export const TIME_EXPENDED_SCHEMA = "TimeExpended"
@@ -44,10 +44,24 @@ const databaseOptions: Realm.Configuration = {
 }
 const realm = new Realm(databaseOptions)
 
+export function getProject(key: string){
+    let obj: any = {}
+    realm.objectForPrimaryKey(PROJECT_SCHEMA, key)
+        ?.entries()
+        .map(property => obj[property[0]] = property[1])
+
+    return obj
+}
 
 export function insertProject(newProject: any) {
     realm.write(() => {
         realm.create(PROJECT_SCHEMA, newProject)
+    })
+}
+
+export function updateProject(project: any){
+    realm.write(() => {
+        realm.create(PROJECT_SCHEMA, project, Realm.UpdateMode.Modified)
     })
 }
 
@@ -72,7 +86,11 @@ export function getAllTimeExpended(): Realm.Results<any> {
 }
 
 export function getCurrentProject(): any {
-    return {...realm.objects('CurrentProject')[0]}
+    let project_properties = realm.objects('CurrentProject')[0].entries()
+
+    let obj: any = {}
+    project_properties.map(property => obj[property[0]] = property[1])
+    return obj
 }
 
 export function updateCurrentProject(project: any) {

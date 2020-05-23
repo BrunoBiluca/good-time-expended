@@ -9,12 +9,13 @@ export interface ProjectModel{
 export interface ProjectLabelProps {
     style?: ViewStyle
     project: any
-    size: number
+    size?: number
 }
 
 export default function ProjectLabelComponent(props: ProjectLabelProps) {
     var project: ProjectModel = props.project
-    var size: number = props.size
+
+    var size: number = props.size || 15
 
     const styles = StyleSheet.create({
         container: {marginHorizontal: 5, flexDirection: 'row', alignItems: 'center' },

@@ -60,15 +60,6 @@ export default function Graphics({ navigation }: any) {
 
   var [screen, setScreen] = useState({ numColumns: 2, width: 0, height: 0, maxValue: Math.round(maxValue) })
 
-  let styleCircle = function (color: String, size: number = 30): any {
-    return {
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-      backgroundColor: color
-    }
-  }
-
   return (
     <SafeAreaView style={{ padding: 10, flex: 1, backgroundColor: 'white' }}>
       <View style={{ margin: 5, marginBottom: 20, padding: 5, borderWidth: 1, borderRadius: 10 }}>

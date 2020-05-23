@@ -12,7 +12,9 @@ export default function ProjectSelectComponent(props: any) {
     const route: any = useRoute()
 
     const getProjects = function () {
-        var projects = getAllProjects().slice().sort((a, b) => a.name < b.name ? -1 : 1)
+        var projects = getAllProjects()
+            .filtered("active = true")
+            .slice().sort((a, b) => a.name < b.name ? -1 : 1)
 
         var ordenedProjects: any[] = []
 
@@ -34,6 +36,13 @@ export default function ProjectSelectComponent(props: any) {
         }
     }, [route.params?.newProject]);
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            setUserProjects(getProjects())
+        });
+    
+        return unsubscribe;
+      }, [navigation])
 
     var [currentProject, setCurrentProject] = useState(getCurrentProject())
 
@@ -70,7 +79,7 @@ export default function ProjectSelectComponent(props: any) {
     return (
         <View style={props.style}>
             <View style={style.header}>
-                <Text>Projetos</Text>
+                <Text style={{fontSize: 24}}>Projetos</Text>
                 <View>
                     <Icon
                         size={36}

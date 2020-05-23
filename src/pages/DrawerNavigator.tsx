@@ -8,6 +8,8 @@ import GraphicsHoursByProject from '../graphics/GraphicsHoursByProject';
 import GraphicsHoursByGoal from '../graphics/GraphicsHoursByGoal';
 import { createStackNavigator } from '@react-navigation/stack';
 import StackNavigator from './StackNavigator';
+import Projects from './Projects';
+import SettingsPage from './SettingsPage';
 
 const Drawer = createDrawerNavigator();
 
@@ -16,10 +18,12 @@ export default function DrawerNavigator() {
     <NavigationContainer>
       <Drawer.Navigator initialRouteName="Root">
         <Drawer.Screen name="Root" component={StackNavigator} options={{ title: 'Home' }}/>
+        <Drawer.Screen name="Projects" component={Projects} options={{ title: 'Projects' }} />
         <Drawer.Screen name="TimeLog" component={TimeLog} options={{ title: 'Log de tempo' }} />
         <Drawer.Screen name="GraphicsHoursByDay" component={Graphics} options={{ title: 'Horas por dia' }} />
         <Drawer.Screen name="GraphicsHoursByProject" component={GraphicsHoursByProject} options={{ title: 'Horas por projeto' }} />
         <Drawer.Screen  name="GraphicsHoursByGoal" component={GraphicsHoursByGoal} options={{ title: 'Horas por meta' }} />
+        <Drawer.Screen name="SettingsPage" component={SettingsPage} options={{title: 'Settings'}} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
