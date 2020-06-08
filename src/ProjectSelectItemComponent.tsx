@@ -29,7 +29,7 @@ export function ProjectSelectItemComponent(props: ProjectSelectItemProps) {
                     <Icon size={18} color='#878787' name='subdirectory-arrow-right' />
                 </View>
 
-                <ProjectLabelComponent style={{ flex: 1 }} project={project} size={15} />
+                <ProjectLabelComponent style={{ flex: 1 }} project={project} size={15} displayTime />
 
                 <View style={isProjectSelected()}>
                     <Icon size={28} color='green' name='check-circle' />

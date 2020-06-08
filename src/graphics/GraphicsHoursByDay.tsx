@@ -48,8 +48,6 @@ export default function Graphics({ navigation }: any) {
     }
   })
 
-  let chartInfo = projects.map(p => { return { name: p.name, color: p.color } })
-
   let maxValue = 0
   chartData.data.map((te) => {
     let sum = te.reduce((total, t) => total + t)
@@ -64,11 +62,11 @@ export default function Graphics({ navigation }: any) {
     <SafeAreaView style={{ padding: 10, flex: 1, backgroundColor: 'white' }}>
       <View style={{ margin: 5, marginBottom: 20, padding: 5, borderWidth: 1, borderRadius: 10 }}>
         <FlatList
-          data={chartInfo}
+          data={projects}
           key={screen.numColumns}
           numColumns={screen.numColumns}
           keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => <ProjectLabelComponent project={item} size={15} />} />
+          renderItem={({ item }) => <ProjectLabelComponent project={item} size={15} displayTime={false} />} />
       </View>
 
       <ScrollView horizontal={true} onLayout={(event) => {
