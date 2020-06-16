@@ -2,9 +2,10 @@ import React, { useState } from 'react'
 import moment from 'moment'
 import { StyleSheet, Text, View, TouchableHighlight, Modal } from 'react-native'
 import { Button } from 'react-native-elements'
-import { getCurrentProject, addTimeExpended, updateCurrentProject } from '../database/Schemas'
+import { getCurrentProject, addTimeExpended, updateCurrentProject, getProject } from '../database/Schemas'
 import ProjectSelectComponent from '../ProjectSelectComponent'
 import CurrentProjectHourCounterComponent from '../CurrentProjectHourCounterComponent'
+import PushNotification from 'react-native-push-notification'
 
 export default function Home() {
   var [currentProject, setCurrentProject] = useState(getCurrentProject())

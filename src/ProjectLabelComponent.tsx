@@ -40,7 +40,7 @@ export default function ProjectLabelComponent(props: ProjectLabelProps) {
         }, 0)
     totalHours += childrenTime
 
-    const totalHoursFormatted = moment.utc(totalHours * 1000).format('HH:mm:ss');
+    const totalHoursFormatted = moment.utc(totalHours * 1000).format('HH:mm');
 
     var size: number = props.size || 15
 
