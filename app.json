@@ -1,5 +1,7 @@
 {
   "expo": {
+    "privacy": "public",
+    "sdkVersion": "36.0.0",
     "name": "Good Time Expended",
     "slug": "good_time_expended",
     "platforms": [
@@ -20,13 +22,11 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "io.brunobiluca.exponent"
-    },
     "android": {
       "package": "com.brunobiluca.goodtimeexpended"
     },
     "entryPoint": "node_modules/expo/AppEntry.js"
-  }
+  },
+  "displayName": "Good Time Expended",
+  "name": "good_time_expended"
 }
