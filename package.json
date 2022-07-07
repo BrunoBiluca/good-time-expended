@@ -21,7 +21,7 @@
     "@react-navigation/stack": "^5.2.11",
     "@types/react-native-push-notification": "^3.0.9",
     "expo-updates": "~0.1.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "react-native-chart-kit": "^5.4.0",
     "react-native-elements": "^1.2.7",
     "react-native-push-notification": "^3.5.2",
